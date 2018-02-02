@@ -1,0 +1,70 @@
+# GLADIATOR (GLobal Approach for DIsease AssociaTed mOdule Reconstruction)
+GLADIATOR is a method for finding disease modules. GLADIATOR aims at maximizing the correlation between module similarity and the gold standard disease similarity. We find correlations for hundreds of diseases simultaneously, using simulated annealing procedure.
+
+## Requirements for installation
+1. Supoorted environments: Linux/Windows 
+2. Python: The code is compatible with python version 2.7 and python 3.5
+3. Python dependecies (verfied verions): 
+      networkx [v1.8.1, v1.9.1, v1.11]
+      pandas [v0.18.1, v0.16.2]
+      numpy [v1.11.1, v1.11.2, v1.9.2]
+      scipy [v0.15.1, v0.18.1]
+      sklearn [v0.15.2, v0.16.1, v0.17.1]
+4. Installing python dependecies
+      $ pip install networkx pandas numpy scipy sklearn
+
+
+## Running GLADIATOR
+GLADIATOR input arguments:
+   -o  --OutFileName  [file_name]    
+   -p  --PPIfName     [file_name]    
+   -s  --SeedPSfName  [file_name]    
+
+   -o  --OutFileName  [file_name]    Output file, store predicted module. [default: GLADIATOR_Modules.txt]
+   -n  --NetworkfName [file_name]    Input PPI network file. File format: Protein1 \t Protein2 \t Comments [default: Interactome.tsv]
+   -s  --SeedPSfName  [file_name]    Initial SeedPS file. Connected component in the PPI served as Seed for diseases. [default: KnownDisPS.tsv]
+   -p  --PhenSimMat   [file_name]    Phenotyic similarity file. Similarity score for each disease pairs for the objective function  [default: PhenSimMat.zip]
+
+Usage Example:
+    $ python GLADIATOR.py [-o OutFileName] [-p PPI_FileName] [-s  --SeedPSfName]
+
+*Note that running GLADIATOR may be time consuning, depanding on the different parameters provided for the annealing algorithm.
+
+   
+Input:
+======
+
+PPIfName : 
+----------
+Tab-separated text file describing the network. Network must contain protein pairs in the first and second columns and an optional comment column. 
+If not provided the default interaction file, supplied with the code, will be used (Interactome.tsv).
+Protein IDs should be given EntrezID, which should be compatible with SeedPS provided in the KnownDisPS file. 
+If using alternative protein naming conventions a corresponsing SeedPS file should be supplied by the user.
+
+
+SeedPSfName
+-----------
+Tab-separated text file with seed intialization values, containing a set of protein associate with diseases.
+If not provided the default interaction file, supplied with the code, will be used  (KnownDisPS.tsv).
+File format:
+'Disease name\tSeedPS'
+Where 'Disease name' should be compatible with disease names provided in the PhenSimMat.tsv file. SeedPS should be given in comma-separated format using naming compatible with PPI file (default: Entrez).
+In case the file does not contain SeedPS for a subset of diseases, GLADIATOR will use the deafault file KnownDisPS.tsv to complete SeedPS for the remaining diseases.
+If SeedPS are not connected in the PPI, GLADIATOR will use the largest connected component provided by the SeedPS for each disease.
+
+
+Output:
+=======
+Tab-separated output text file describing the module. If not provided, modules will be saved to GLADIATOR_Modules.txt file in current directory.
+GLADIATOR output module file format:
+'Disease name\tModule proteins'
+The module proteins are given in comma-separated EntrezIDs, or different ID provided by the user in PPI and SeedPS files.
+
+
+## Restoring paper results
+1. Install python and dependecies packages
+   *Notice that to restore the exact modules reported in the paper networkx version < 1.9 is required. For later versions of networkx the output modules will slightly vary
+2. Place GLADIATOR.py and all input files (Interactome.tsv, KnownDisPS.tsv, PhenSimMat.tsv) in the same folder
+3. From command line run:
+      $ python GLADIATOR.py 
+
